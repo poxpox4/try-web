@@ -105,7 +105,7 @@ function Newton(){
           
         </table>
       )}
-      <Plot className="flex w-full min-w-screen"
+      <Plot useResizeHandler={true} 
         data={[
           {
             x: iteration.map((item,index) => index+1),
@@ -119,6 +119,8 @@ function Newton(){
           }
         ]}
         layout={{
+          width: 800,
+          height: 500,
           title: {text: "Graph Newton-raphson"},
           xaxis: {title:{text:"X"}},
           yaxis: {title:{text:"f(X)"}},

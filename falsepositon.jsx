@@ -120,7 +120,7 @@ function Falseposition(){
                     </tbody>
                 </table>
             )}
-            <Plot className="flex w-full min-w-screen"
+            <Plot useResizeHandler={true} 
                 data={[
                     {
                         //x: iteration.map((item) => item.x1),
@@ -135,8 +135,8 @@ function Falseposition(){
                     }
                 ]}
                 layout={{
-                     //width: 800,
-                     //height: 500,
+                    width: 800,
+                    height: 500,
                     title:{text: "Graph Falseposition"},
                     xaxis: { title: { text: "X1" } },
                     yaxis: { title: { text: "f(X)" } },

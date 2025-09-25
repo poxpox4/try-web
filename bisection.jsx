@@ -276,7 +276,7 @@ function Bisection(){
                     </tbody>
                 </table>
             )}
-           <Plot className="flex w-full min-w-screen"
+           <Plot useResizeHandler={true} 
                  data={[
                    {
                      //x: iteration.map((item) => item.xm),
@@ -292,9 +292,9 @@ function Bisection(){
                
                  ]}
                  layout={{
-                   //width: 800,
-                   //height: 400,
-                   title: {text:"Graph Bisection"},
+                    width: 800,
+                    height: 500,
+                    title: {text:"Graph Bisection"},
                     xaxis: { title: { text: "X" } },
                     yaxis: { title: { text: "f(X)" } },
                 //    className: "w-full",
