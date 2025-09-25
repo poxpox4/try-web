@@ -166,6 +166,7 @@
 
 import { useState } from "react";
 import {evaluate} from "mathjs";
+import Plot from 'react-plotly.js';
 function Bisection(){
     const [fx,setFx] = useState("");
     const [xl,setXl] = useState("");
@@ -187,12 +188,12 @@ function Bisection(){
             do{
                 const fxl = evaluate(fx,{[variable]:xlcal});
                 const fxm = evaluate(fx,{[variable]:xmnew});
-                
+                let errorcal = Math.abs((xmnew-xmold)/xmnew)
                 resultarr.push({
                     xl: xlcal,
                     xr: xrcal,
                     xm: xmnew,
-                    fxl,fxm
+                    fxl,fxm,error:errorcal,
                 })
                 if(fxl*fxm>0){
                     xlcal = xmnew;
@@ -275,6 +276,30 @@ function Bisection(){
                     </tbody>
                 </table>
             )}
+           <Plot className="flex w-full min-w-screen"
+                 data={[
+                   {
+                     //x: iteration.map((item) => item.xm),
+                     //y: iteration.map((item) => item.fxm),
+                     x: iteration.map((item,index) => index+1),
+                     y: iteration.map((item) => item.error),
+                     type: "scatter",
+                     mode: "lines+markers",
+                     marker: { color: "black" },
+                     line: {color: "gray"},
+                     //name: "XM Iterations"
+                   }
+               
+                 ]}
+                 layout={{
+                   //width: 800,
+                   //height: 400,
+                   title: {text:"Graph Bisection"},
+                    xaxis: { title: { text: "X" } },
+                    yaxis: { title: { text: "f(X)" } },
+                //    className: "w-full",
+                 }}
+               />
         </div>
         
     )

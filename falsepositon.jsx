@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { evaluate } from "mathjs";
+import Plot from "react-plotly.js";
 function Falseposition(){
     const [fx,setFx] = useState("");
     const [xl,setXl] = useState("");
@@ -20,26 +21,30 @@ function Falseposition(){
             let x1 = (fxr*xlcal-fxl*xrcal)/(fxr-fxl);
             let fx1 = evaluate(fx,{[variable]:x1});
             let x1old = 0;
+            //let errorcal = 0;
             const resultarr = [];
+            //x1old = x1; //x0รอบgiven
             do{
-                x1old = x1;
                 
+                let errorcal = Math.abs((x1-x1old)/x1);
                 resultarr.push({
                     xl: xlcal,
                     xr: xrcal,
-                    fxl,fxr,x1,fx1
+                    fxl,fxr,x1,fx1,error:errorcal,
                 })
+                x1old = x1;
                 if(fxl*fx1>0){
                     xlcal = x1;
                 }
                 else{
                     xrcal = x1;
                 }
+                
                 fxl = evaluate(fx,{[variable]:xlcal});
                 fxr = evaluate(fx,{[variable]:xrcal});
                 x1  = (fxr*xlcal-fxl*xrcal)/(fxr-fxl);
                 fx1 = evaluate(fx,{[variable]:x1});
-                
+                //errorcal = Math.abs((x1-x1old)/x1);
             }while(Math.abs((x1-x1old)/x1)>agree&&Math.abs(fx1)>agree);
             setResult(x1);
             setIteration(resultarr);
@@ -115,6 +120,29 @@ function Falseposition(){
                     </tbody>
                 </table>
             )}
+            <Plot className="flex w-full min-w-screen"
+                data={[
+                    {
+                        //x: iteration.map((item) => item.x1),
+                        //y: iteration.map((item) => item.fx1),
+                        x: iteration.map((item,index) => index+1),
+                        y: iteration.map((item) => item.error),
+                        type: "scatter",
+                        mode: "lines+markers",
+                        marker: { color: "black" },
+                        line: {color: "gray"},
+                        //name: "X1 Iterations",
+                    }
+                ]}
+                layout={{
+                     //width: 800,
+                     //height: 500,
+                    title:{text: "Graph Falseposition"},
+                    xaxis: { title: { text: "X1" } },
+                    yaxis: { title: { text: "f(X)" } },
+                    
+                }}
+            />
         </div>
     )
 }
