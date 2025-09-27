@@ -177,8 +177,7 @@ function Bisection(){
     function Calculate(){
         try{
             const variablematch = fx.match(/[a-zA-Z]+/g);
-            const variable = variablematch ? variablematch[0] : "x";
-            //const variable = variablematch ? variablematch[variablematch.length - 1] : "x";
+            const variable = variablematch ? variablematch[variablematch.length-1] : "x";
             let xlcal = parseFloat(xl);
             let xrcal = parseFloat(xr);
             let agree = parseFloat(error);
