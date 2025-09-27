@@ -138,7 +138,7 @@ function Falseposition(){
                     width: 800,
                     height: 500,
                     title:{text: "Graph Falseposition"},
-                    xaxis: { title: { text: "X1" } },
+                    xaxis: { title: { text: "X" } },
                     yaxis: { title: { text: "f(X)" } },
                     
                 }}
