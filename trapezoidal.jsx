@@ -48,9 +48,12 @@ function Trapezoidal(){
             //const F_integral = parse(Fx_integral);
             // const Fa = F_integral.evaluate({[variable]:anum});
             // const Fb = F_integral.evaluate({[variable]:bnum});
-            const Fa = nerdamer(Fx_integral, {[variable]: anum}).evaluate().text();
-            const Fb = nerdamer(Fx_integral, {[variable]: bnum}).evaluate().text();
-            const I_real = parseFloat(Fb)-parseFloat(Fa);
+            //const Fa = nerdamer(Fx_integral, {[variable]: anum}).evaluate().text();
+            //const Fb = nerdamer(Fx_integral, {[variable]: bnum}).evaluate().text();
+            const Fa = evaluate(Fx_integral,{[variable]:anum});
+            const Fb = evaluate(Fx_integral,{[variable]:bnum});
+            const I_real = Fb-Fa;
+            //const I_real = parseFloat(Fb)-parseFloat(Fa);
             const I_cal = CompositeTrapezoidal(anum,bnum,nnum,variable);
             const error = ((I_real-I_cal)/I_real)*100;
             setIreal(I_real);
