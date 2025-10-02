@@ -11,7 +11,11 @@ function Trapezoidal(){
     const [Ireal,setIreal] = useState(null);
     const [Ical,setIcal] = useState(null);
     const [result,setResult] = useState(null);
-    const [iteration,setIteration] = useState([]);
+    const [iterationxi,setIterationxi] = useState([]);
+    const [iterationyi,setIterationyi] = useState([]);
+    const [xcurve,setXcurve] = useState([]);
+    const [ycurve,setYcurve] = useState([]);
+    const [graphtrapezoidal,setGraphtrapezoidal] = useState([]);
     function F(x,variable){
         const equation = evaluate(fx,{[variable]:x}); 
         return equation;
@@ -25,13 +29,12 @@ function Trapezoidal(){
         }
         const h = (b-a)/n;
         let sum = 0;
-        //let i = 1;
-        // while(i<n){
-        //     sum += F(a+i*h,variable);
-        //     i++;
-        // }
+        // const xi = [];
+        // const yi = [];
         for(let i=1;i<n;i++){
             sum += F(a+i*h,variable);
+            // xi.push(sum);
+            // yi.push(sum);
         }
         const I = (h/2)*(F(a,variable)+F(b,variable)+2*sum);
         return I;
@@ -43,13 +46,39 @@ function Trapezoidal(){
             const anum = parseFloat(a);
             const bnum = parseFloat(b);
             const nnum = parseFloat(n);
-            const resultarr = [];
-            const Fx_integral = nerdamer.integrate(fx,variable).toString();
-            //const F_integral = parse(Fx_integral);
-            // const Fa = F_integral.evaluate({[variable]:anum});
-            // const Fb = F_integral.evaluate({[variable]:bnum});
-            //const Fa = nerdamer(Fx_integral, {[variable]: anum}).evaluate().text();
-            //const Fb = nerdamer(Fx_integral, {[variable]: bnum}).evaluate().text();
+            const xcurve = [];
+            const ycurve = [];
+            for(let i=anum;i<=bnum;i += 0.01){
+                //const val = F(i);
+                xcurve.push(i);
+                ycurve.push(F(i,variable));
+            }
+            setXcurve(xcurve);
+            setYcurve(ycurve);
+            const h = (bnum-anum)/nnum;
+            const xi = [];
+            const yi = [];
+            for(let i=0;i<=nnum;i++){
+                const xcal = anum+i*h;
+                xi.push(xcal);
+                yi.push(F(xcal,variable));
+            }
+            setIterationxi(xi);
+            setIterationyi(yi);
+            const trapezoid = xi.map((x,i)=>{
+            if(i===0) return null;
+                return {
+                    x: [xi[i-1], xi[i], xi[i], xi[i-1]],
+                    y: [0, 0, yi[i], yi[i-1]],
+                    type: "scatter",
+                    mode: "lines",
+                    fill: "toself",
+                    fillcolor: "rgba(0,100,200,0.3)",
+                    line: { color: "blue" },
+                };
+            }).filter(Boolean);
+            setGraphtrapezoidal(trapezoid);
+            const Fx_integral = nerdamer.integrate(fx, variable).toString();
             const Fa = evaluate(Fx_integral,{[variable]:anum});
             const Fb = evaluate(Fx_integral,{[variable]:bnum});
             const I_real = Fb-Fa;
@@ -110,8 +139,39 @@ function Trapezoidal(){
             {result!==null &&(
                 <div className="text-xl">Result of Error is : {result.toFixed(6)}</div>
             )}
-            <Plot
-                
+            <Plot useResizeHandler={true} 
+                data={[
+                    {
+                        x: xcurve,
+                        y: ycurve,
+                        type: "scatter",
+                        mode: "lines",
+                    },
+                    {
+                        x: iterationxi,
+                        y: iterationyi,
+                        type: "scatter",
+                        mode: "markers",
+                        marker: {color: "black"},
+                        line: { color: "gray" },
+                    },...graphtrapezoidal
+                    // {
+                    //     x: iterationxi.map((item,index) => [xi[index-1],xi[index],xi[index],xi[index-1]]),
+                    //     y: iterationyi.map((item,index) => [0,0,yi[index],yi[i-1]]),
+                    //     type: "scatter",
+                    //     mode: "lines",
+                    //     fill: "toself",
+                    //     fillcolor: "rgba(240, 241, 242, 0.3)",
+                    //     line: {color: "gray"},
+                    // },
+                ]}
+                layout={{
+                    width: 800,
+                    height: 500,
+                    title: {text: "Graph Trapezoidal"},
+                    xaxis: {title:{text:"X"}},
+                    yaxis: {title:{text:"f(X)"}},
+                }}
             />
         </div>
     )
