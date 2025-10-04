@@ -124,18 +124,17 @@ function Linear(){
             <div>
                 <label className="block">ค่าที่ต้องการจะหา</label>
                 <input type="text"
-                placeholder="ใส่ค่า X ที่ต้องหารจะหา" 
+                placeholder="ใส่ค่า X ที่ต้องการจะหา" 
                 className="border px-2 py-1 rounded"
                 value={xfind}
                 onChange={(e) => setXfind(e.target.value)}/>
             </div>
             <button onClick={Calculate} className="bg-blue-500 px-4 py-2 rounded text-white">Calculate</button>
             {(arrayx!==null||arrcal!==null||resultarrx!==null||result!==null)&&(
-                <div className="flex divide-x-2 divide-blue-500 border-3 border-blue-500 rounded bg-blue-50 p-4 space-x-4 overflow-auto">
+                <div className="flex space-x-4 overflow-auto">
                     {arrayx!==null &&(
-                        
-                        <div className="w-1/2 pl-2">
-                            <h4 className="font-bold">Array Data</h4>
+                        <div className="w-1/4 p-4 border-2 border-blue-300 rounded bg-blue-50 shadow">
+                            <h4 className="font-bold mb-2">Array Data</h4>
                             {arrayx.map((item, index) => (
                                 <p key={index}>
                                     [{item[0]}, {item[1]}]
@@ -144,8 +143,8 @@ function Linear(){
                         </div>
                     )}
                     {arrcal!==null &&(
-                        <div className="w-1/2 pl-2 ">
-                            <h4 className="font-bold">Array of a</h4>
+                        <div className="w-1/4 p-4 border-2 border-green-300 rounded bg-green-50 shadow">
+                            <h4 className="font-bold mb-2">Array of a</h4>
                             {arrcal.map((item, index) => (
                                 <p key={index}>
                                     [{item[0]}, {item[1]},{item[2]}]
@@ -154,8 +153,8 @@ function Linear(){
                         </div>
                     )}
                     {resultarrx!==null&&(
-                        <div className="w-1/2 pl-2 ">
-                            <h4 className="font-bold">Value of a</h4>
+                        <div className="w-1/4 p-4 border-2 border-yellow-300 rounded bg-yellow-50 shadow">
+                            <h4 className="font-bold mb-2">Value of a</h4>
                             {resultarrx.map((item,index)=>(
                                 <p key={index}>
                                     a{index} = {item.toFixed(6)}
@@ -164,8 +163,8 @@ function Linear(){
                         </div>
                     )}
                     {result!==null&&(
-                        <div >
-                            <h4 className="font-bold">Result</h4>
+                        <div className="w-1/4 p-4 border-2 border-cyan-300 rounded bg-cyan-50 shadow">
+                            <h4 className="font-bold mb-2">Result</h4>
                             <p>f({xfind}) = {result.toFixed(6)}</p>
                         </div>
                     )}
