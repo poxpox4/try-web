@@ -130,44 +130,48 @@ function Linear(){
                 onChange={(e) => setXfind(e.target.value)}/>
             </div>
             <button onClick={Calculate} className="bg-blue-500 px-4 py-2 rounded text-white">Calculate</button>
-            <div className="flex divide-x border rounded bg-blue-50 p-4 space-x-4 overflow-auto">
-                {arrayx!==null &&(
-                    <div className="w-1/2 pl-2">
-                        <h4 className="font-bold">Array Data</h4>
-                        {arrayx.map((item, index) => (
-                            <p key={index}>
-                                [{item[0]}, {item[1]}]
-                            </p>
-                        ))}
-                    </div>
-                 )}
-                {arrcal!==null &&(
-                    <div className="w-1/2 pl-2 ">
-                        <h4 className="font-bold">Array of a</h4>
-                        {arrcal.map((item, index) => (
-                            <p key={index}>
-                                [{item[0]}, {item[1]},{item[2]}]
-                            </p>
-                        ))}
-                    </div>
-                )}
-                {resultarrx!==null&&(
-                    <div className="w-1/2 pl-2 ">
-                        <h4 className="font-bold">Value of a</h4>
-                        {resultarrx.map((item,index)=>(
-                            <p key={index}>
-                                a{index} = {item.toFixed(6)}
-                            </p>
-                        ))}
-                    </div>
-                )}
-                {result!==null&&(
-                    <div >
-                        <h4 className="font-bold">Result</h4>
-                        <p>f({xfind}) = {result.toFixed(6)}</p>
-                    </div>
-                )}
+            {(arrayx!==null||arrcal!==null||resultarrx!==null||result!==null)&&(
+                <div className="flex divide-x-2 divide-blue-500 border-3 border-blue-500 rounded bg-blue-50 p-4 space-x-4 overflow-auto">
+                    {arrayx!==null &&(
+                        
+                        <div className="w-1/2 pl-2">
+                            <h4 className="font-bold">Array Data</h4>
+                            {arrayx.map((item, index) => (
+                                <p key={index}>
+                                    [{item[0]}, {item[1]}]
+                                </p>
+                            ))}
+                        </div>
+                    )}
+                    {arrcal!==null &&(
+                        <div className="w-1/2 pl-2 ">
+                            <h4 className="font-bold">Array of a</h4>
+                            {arrcal.map((item, index) => (
+                                <p key={index}>
+                                    [{item[0]}, {item[1]},{item[2]}]
+                                </p>
+                            ))}
+                        </div>
+                    )}
+                    {resultarrx!==null&&(
+                        <div className="w-1/2 pl-2 ">
+                            <h4 className="font-bold">Value of a</h4>
+                            {resultarrx.map((item,index)=>(
+                                <p key={index}>
+                                    a{index} = {item.toFixed(6)}
+                                </p>
+                            ))}
+                        </div>
+                    )}
+                    {result!==null&&(
+                        <div >
+                            <h4 className="font-bold">Result</h4>
+                            <p>f({xfind}) = {result.toFixed(6)}</p>
+                        </div>
+                    )}
             </div>
+            )}
+            
             
             
             
