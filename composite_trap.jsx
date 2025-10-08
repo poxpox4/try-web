@@ -4,11 +4,11 @@ import Plot from "react-plotly.js";
 import nerdamer from 'nerdamer';
 import 'nerdamer/Calculus';
 import { MathJax,MathJaxContext } from "better-react-mathjax";
-function Trapezoidal(){
+function CompositeTrapezoidal(){
     const [fx,setFx] = useState("");
     const [a,setA] = useState("");
     const [b,setB] = useState("");
-    const [n,setN] = useState(1);
+    const [n,setN] = useState("");
     const [Ireal,setIreal] = useState(null);
     const [Ical,setIcal] = useState(null);
     const [error,setError] = useState(null);
@@ -68,7 +68,7 @@ function Trapezoidal(){
             setIterationxi(xi);
             setIterationyi(yi);
             const trapezoid = xi.map((x,i)=>{
-            if(i===0) return null;
+            if(i==0) return null;
                 return {
                     x: [xi[i-1], xi[i], xi[i], xi[i-1]], //xi[i-1]ขอบซ้าย xi[i]ขอบขวา
                     y: [0, 0, yi[i], yi[i-1]], //y=0 เส้นด้านล่างซ้าย/ขวา yi[i-1],yi[i]  เส้นด้านบนของ trapezoid
@@ -97,7 +97,7 @@ function Trapezoidal(){
     }
     return(
         <div className="flex flex-col items-center justify-center min-h-screen space-y-4 p-4">
-            <h1 className="font-bold text-3xl">Single Trapzoidal</h1>
+            <h1 className="font-bold text-3xl">Composite Trapzoidal</h1>
             <MathJaxContext>
                 <div className="w-full max-w-4xl px-4 ">
                     <div className="mt-1 p-4 bg-white-50 rounded-2xl shadow-md text-center ">
@@ -106,8 +106,8 @@ function Trapezoidal(){
                 </div>
             </MathJaxContext>
             <div className="w-full max-w-xl space-y-3 mt-1 px-10 py-10 bg-white-50 rounded-2xl shadow-md text-center">
-                <div>
-                    <label className="block mb-1 " >f(X)</label>
+                <div >
+                    <label className="block">f(X)</label>
                     <input type="text" 
                     placeholder="2x^3-5x^2+3x+1"
                     className="rounded shadow-md px-3 py-2 rounded w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 text-center"
@@ -115,7 +115,7 @@ function Trapezoidal(){
                     onChange={(e) => setFx(e.target.value)}/>
                 </div>
                 <div>
-                    <label className="block mb-1 ">a</label>
+                    <label className="block">a</label>
                     <input type="text" 
                     placeholder="0"
                     className="rounded shadow-md px-3 py-2 rounded w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 text-center"
@@ -123,15 +123,22 @@ function Trapezoidal(){
                     onChange={(e) => setA(e.target.value)}/>
                 </div>
                 <div>
-                    <label className="block mb-1 ">b</label>
+                    <label className="block">b</label>
                     <input type="text"
                     placeholder="2"
                     className="rounded shadow-md px-3 py-2 rounded w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 text-center" 
                     value={b}
                     onChange={(e) => setB(e.target.value)}/>
                 </div>
+                <div>
+                    <label className="block">n</label>
+                    <input type="text"
+                    placeholder="4"
+                    className="rounded shadow-md px-3 py-2 rounded w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 text-center" 
+                    value={n}
+                    onChange={(e) => setN(e.target.value)}/>
+                </div>
             </div>
-                
                 
             <button onClick={Calculate} className="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded text-white">Calculate</button>
             <div className="mt-1 p-4 bg-white-50 rounded-2xl shadow-md w-full max-w-4xl px-4 text-center">
@@ -167,7 +174,7 @@ function Trapezoidal(){
                     layout={{
                         autosize: true,
                         responsive: true,
-                        title: {text: "Graph Trapezoidal"},
+                        title: {text: "Graph Composite Trapezoidal"},
                         xaxis: {title:{text:"X"}},
                         yaxis: {title:{text:"f(X)"}},
                     }}
@@ -178,4 +185,4 @@ function Trapezoidal(){
         </div>
     )
 }
-export default Trapezoidal;
+export default CompositeTrapezoidal;

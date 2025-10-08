@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { evaluate,derivative } from "mathjs";
 import Plot from "react-plotly.js";
+import { MathJax,MathJaxContext } from "better-react-mathjax";
 function Newton(){
     const [fx,setFx] = useState("");
     const [x0,setX0] = useState("");
@@ -9,9 +10,11 @@ function Newton(){
     const [iteration,setIteration] = useState([]);
     function Calculate(){
       try{
-        const variablematch = fx.match(/[a-zA-Z]+/g);
-        //const variable = variablematch.length > 0 ? variablematch[0]: "x";
-        //const variable = variablematch ? variablematch[0] : "x";
+        if(!fx||!x0||!error){
+          alert("กรุณากรอก f(x), X Start และ ERROR ให้ครบก่อนคำนวณ");
+          return;
+        }
+        const variablematch = fx.match(/[a-zA-Z]+/g)
         const variable = variablematch ? variablematch[variablematch.length - 1] : "x";
         let fdif = derivative(fx,variable).toString();
         let x0cal = parseFloat(x0);
@@ -50,82 +53,96 @@ function Newton(){
       }
     }
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen space-y-4">
+    <div className="flex flex-col items-center justify-center min-h-screen space-y-4 p-4">
       <h1 className="font-bold text-3xl">Newton Raphson</h1>
-      <div>
-        <label className="block text-left">f(X)</label>
-        <input type="text" 
-        placeholder="f(X)"
-        className="border px-2 py-1 rounded"
-        value={fx}
-        onChange={(e) => setFx(e.target.value)}/>
+      <MathJaxContext>
+        <div className="w-full max-w-4xl px-4">
+          <div className="bg-white-50 rounded-2xl shadow-md mt-1 p-4 text-center">
+            <MathJax className="text-3xl">{"\\[f(x)=" +(fx || "\\;...\\;")+ "\\]"}</MathJax>
+          </div>
+        </div>
+      </MathJaxContext>
+      <div className="w-full max-w-xl space-y-3 mt-1 px-10 py-10 bg-white-50 rounded-2xl shadow-md text-center">
+          <div>
+            <label className="block mb-1">f(X)</label>
+            <input type="text" 
+            placeholder="x^2-7"
+            className="shadow-md px-3 py-2 rounded w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 text-center"
+            value={fx}
+            onChange={(e) => setFx(e.target.value)}/>
+          </div>
+          <div>
+            <label className="block mb-1">X Start</label>
+            <input type="text" 
+            placeholder="2"
+            className="shadow-md px-3 py-2 rounded w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 text-center"
+            value={x0}
+            onChange={(e) => setX0(e.target.value)}/>
+          </div>
+          <div>
+            <label className="block mb-1">ERROR</label>
+            <input type="text" 
+            placeholder="0.000001"
+            className="shadow-md px-3 py-2 rounded w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 text-center"
+            value={error}
+            onChange={(e) => setError(e.target.value)}/>
+          </div>
       </div>
-      <div>
-        <label className="block text-left">X Start</label>
-        <input type="text" 
-        placeholder="X Start"
-        className="border px-2 py-1 rounded"
-        value={x0}
-        onChange={(e) => setX0(e.target.value)}/>
+        
+      <button onClick={Calculate} className="bg-blue-500 hover:bg-blue-600 px-6 py-3 text-white rounded">Calculate</button>
+      <div className="mt-1 px-4 py-10 bg-white-50 shadow-md rounded-2xl w-full max-w-4xl text-center">
+        <h2 className="font-bold text-xl mb-3">Solution</h2>
+          {result!==null &&(
+              <div className="text-xl mb-3">Result is : {result.toFixed(6)}</div>
+            )}
+            {iteration.length > 0 &&(
+              <table className="border border-collapse border-gray-400 w-full">
+                <thead>
+                  <tr>
+                    <th className="border px-2 py-1">ITERATION</th>
+                    <th className="border px-2 py-1">X start</th>
+                    <th className="border px-2 py-1">X next</th>
+                    <th className="border px-2 py-1">f(x)</th>
+                    <th className="border px-2 py-1">f'(x)</th>
+                  </tr>
+                </thead>
+                  <tbody>
+                    {iteration.map((item,index) => (
+                      <tr key={index}>
+                        <td className="border px-2 py-1">{index+1}</td>
+                        <td className="border px-2 py-1">{item.x0.toFixed(6)}</td>
+                        <td className="border px-2 py-1">{item.x1.toFixed(6)}</td>
+                        <td className="border px-2 py-1">{item.fxx.toFixed(6)}</td>
+                        <td className="border px-2 py-1">{item.fprime.toFixed(6)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                
+              </table>
+            )}
       </div>
-      <div>
-        <label className="block text-left">ERROR</label>
-        <input type="text" 
-        placeholder="ERROR"
-        className="border px-2 py-1 rounded"
-        value={error}
-        onChange={(e) => setError(e.target.value)}/>
+      <div className="w-full max-w-4xl mt-1 bg-white-50 p-4 shadow-md rounded-2xl">
+            <Plot useResizeHandler={true} 
+              data={[
+                {
+                  x: iteration.map((item,index) => index+1),
+                  y: iteration.map((item) => item.error),
+                  type: "scatter",
+                  mode: "lines+markers",
+                  marker: {color: "black"},
+                  line: {color: "gray"},
+                }
+              ]}
+              layout={{
+                autosize: true,
+                responsive: true,
+                title: {text: "Graph Newton-raphson Error"},
+                xaxis: {title:{text:"X"}},
+                yaxis: {title:{text:"f(X)"}},
+              }}
+              style={{width:"100%",height:"500px"}}
+            />
       </div>
-      <button onClick={Calculate} className="bg-blue-500 px-4 py-2 text-white rounded">Calculate</button>
-      {result!==null &&(
-        <div className="text-xl">Result is : {result.toFixed(6)}</div>
-      )}
-      {iteration.length > 0 &&(
-        <table className="border border-collapse border-gray-400 w-full">
-          <thead>
-            <tr>
-              <th className="border px-2 py-1">ITERATION</th>
-              <th className="border px-2 py-1">X start</th>
-              <th className="border px-2 py-1">X next</th>
-              <th className="border px-2 py-1">f(x)</th>
-              <th className="border px-2 py-1">f'(x)</th>
-            </tr>
-          </thead>
-            <tbody>
-              {iteration.map((item,index) => (
-                <tr key={index}>
-                  <td className="border px-2 py-1">{index+1}</td>
-                  <td className="border px-2 py-1">{item.x0.toFixed(6)}</td>
-                  <td className="border px-2 py-1">{item.x1.toFixed(6)}</td>
-                  <td className="border px-2 py-1">{item.fxx.toFixed(6)}</td>
-                  <td className="border px-2 py-1">{item.fprime.toFixed(6)}</td>
-                </tr>
-              ))}
-            </tbody>
-          
-        </table>
-      )}
-      <Plot useResizeHandler={true} 
-        data={[
-          {
-            x: iteration.map((item,index) => index+1),
-            y: iteration.map((item) => item.error),
-            //x: iteration.map((item) => item.x1),
-            //y: iteration.map((item) => item.fxx),
-            type: "scatter",
-            mode: "lines+markers",
-            marker: {color: "black"},
-            line: {color: "gray"},
-          }
-        ]}
-        layout={{
-          width: 800,
-          height: 500,
-          title: {text: "Graph Newton-raphson"},
-          xaxis: {title:{text:"X"}},
-          yaxis: {title:{text:"f(X)"}},
-        }}
-      />
     </div>
   )
 }
