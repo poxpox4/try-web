@@ -50,12 +50,12 @@ function Gausseliminate(){
                 return;
             }
             if(matrixB.every(value=>value=="")){
-                alert("Matrix A ยังไม่ได้ใส่ค่า");
+                alert("Matrix B ยังไม่ได้ใส่ค่า");
                 return;
             }
             let arrcal = Array.from(Array(size),()=>Array(size+1).fill(0));
-            for(let i=0;i<n;i++){
-                for(let j=0;j<n;j++){
+            for(let i=0;i<size;i++){
+                for(let j=0;j<size;j++){
                     arrcal[i][j] = parseFloat(matrixA[i][j]);
                 }
                 arrcal[i][size] = parseFloat(matrixB[i]);
