@@ -1,8 +1,9 @@
 import { useState } from "react";
-function Gaussjordan(){
+function MatrixInvert(){
+    const [fx,setFx] = useState("");
     const [n,setN] = useState(3);
     const [matrixA,setMatrixA] = useState(Array(3).fill().map(()=>Array(3).fill("")));
-    const [matrixB,setMatrixB] = useState(Array(3).fill(""))
+    const [matrixB,setMatrixB] = useState(Array(3).fill(""));
     const [result,setResult] = useState([]);
     function ChangematrixA(i,j,value){
         const newA = [...matrixA];
@@ -21,38 +22,38 @@ function Gaussjordan(){
         setMatrixB(Array(size).fill(""));
         setResult([]);
     }
-    function Gaussjordan(arr,resultarr){
+    function Gauss_invert(arr){
         const size = n;
+        let aug = arr.map((row,i)=>[
+            ...row.map(value=>parseFloat(value)),
+            ...Array.from({length:size},(_,j)=>(i==j ? 1 :0))
+        ]);
+
         for(let i=0;i<size;i++){
-            let forward = arr[i][i];
-            // ถ้า forward เป็นศูนย์ ให้สลับแถว
+            let forward = aug[i][i];
             if(forward==0){
                 for(let k=i+1;k<size;k++){
-                    if(arr[k][i]!=0){
-                        [arr[i],arr[k]] = [arr[k],arr[i]];
-                        forward = arr[i][i];
+                    if(aug[k][i]!=0){
+                        [aug[i],aug[k]] = [aug[k],aug[i]];
+                        forward = aug[i][i];
                         break;
                     }
                 }
             }
-            for(let j=0;j<=size;j++){
-                arr[i][j] /= forward; 
+            for(let j=0;j<2*size;j++){
+                aug[i][j] /= forward; 
             }
             for(let k=0;k<size;k++){
                 if(k!=i){
-                    let down = arr[k][i];
-                    for(let j=i;j<=size;j++){
-                        arr[k][j] -= down*arr[i][j]; 
+                    let down = aug[k][i];
+                    for(let j=i;j<2*size;j++){
+                        aug[k][j] -= down*aug[i][j];
                     }
                 }
-            }
+            } 
         }
-        for(let i=0;i<size;i++){
-            resultarr[i] = arr[i][size];
-            // for(let j=i+1;j<size;j++){
-            //     resultarr[i] -= arr[i][j]*resultarr[j]; 
-            // }
-        }
+        const inverse = aug.map(row => row.slice(size, 2 * size));
+        return inverse;
     }
     function Calculate(){
         try{
@@ -61,36 +62,31 @@ function Gaussjordan(){
                 return;
             }
             if(matrixB.every(value=>value=="")){
-                alert("Matrix A ยังไม่ได้ใส่ค่า");
+                alert("Matrix B ยังไม่ได้ใส่ค่า");
                 return;
             }
             const size = n;
-            let arrcal = Array.from(Array(size),()=>Array(size+1).fill(0));
-            for(let i=0;i<size;i++){
-                for(let j=0;j<size;j++){
-                    arrcal[i][j] = parseFloat(matrixA[i][j]);
-                }
-                arrcal[i][size] = parseFloat(matrixB[i]);
-            }
-            let resultarr = Array(size).fill(0);
-            Gaussjordan(arrcal,resultarr);
+            const A = matrixA.map(row => row.map(value => parseFloat(value)));
+            const B = matrixB.map(value => parseFloat(value));
+            const matrixAcal = Gauss_invert(A);
+            let resultarr = matrixAcal.map(row => row.reduce((sum,value,j) => sum+value*B[j],0));
             setResult(resultarr);
         }
         catch{
-            alert("ใส่ค่าให้ครบ");
+            ("ใส่ค่าให้ครบ");
         }
     }
     return(
         <div className="flex flex-col items-center justify-center min-h-screen space-y-4 p-4">
-            <h1 className="font-bold text-3xl">Gauss Jordan Method</h1>
+            <h1 className="font-bold text-3xl">Matrix Inversion</h1>
             <div className="flex items-center gap-3 p-5 rounded-2xl shadow-md">
-                <label className="">Matrix size (NxN)</label>
-                <input type="number"
+                <label className="text-lg">Matrix size (NxN)</label>
+                <input type="number" 
                 min={1}
                 className="shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 p-2 w-20 text-center rounded-lg" 
                 value={n}
                 onChange={(e) => Changesize(e.target.value)}/>
-                <button onClick={Calculate} className="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded text-white sm:w-auto">Calculte</button>
+                <button onClick={Calculate} className="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded text-white sm:w-auto">Calculate</button>
             </div>
             <div className="flex md:flex-row gap-6 w-full justify-center items-center">
                 <div className="flex flex-col items-center">
@@ -144,4 +140,4 @@ function Gaussjordan(){
         </div>
     )
 }
-export default Gaussjordan;
+export default MatrixInvert;
