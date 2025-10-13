@@ -65,7 +65,6 @@ function MatrixInvert(){
                 alert("Matrix B ยังไม่ได้ใส่ค่า");
                 return;
             }
-            const size = n;
             const A = matrixA.map(row => row.map(value => parseFloat(value)));
             const B = matrixB.map(value => parseFloat(value));
             const matrixAcal = Gauss_invert(A);

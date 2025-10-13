@@ -5,8 +5,6 @@ function PolynomialRegression(){
     const [xfind,setXfind] = useState();
     const [m,setM] = useState();
     const [result,setResult] = useState(null);
-    const [arrayx,setArrayx] = useState(null);
-    const [arrcal,setArraycal] = useState(null);
     const [resultarrx,setResultarrayx] = useState(null);
     function Gaussjordan(arr,resultarr){
         const M = parseFloat(m)+1;
@@ -50,7 +48,6 @@ function PolynomialRegression(){
             }
             const N = x.length;
             const arrx = Array.from(Array(N),(_,i)=>[x[i],fx[i]]);
-            setArrayx(arrx);
             const X = Array.from(Array(N),()=>Array(M));
             const Y = Array(N);
             for(let i=0;i<N;i++){
@@ -66,7 +63,7 @@ function PolynomialRegression(){
             let sumxy = Array(M).fill(0);
             for(let i=0;i<N;i++){
                 sumy += Y[i];
-                for(let j=1;j<M;j++){
+                for(let j=0;j<M;j++){
                     sumx[j] += X[i][j];
                     sumxy[j] += X[i][j]*Y[i];
                     for(let k=0;k<M;k++){
@@ -97,10 +94,9 @@ function PolynomialRegression(){
                     arrcal[i][M] = sumxy[i];
                 }
             }
-            setArraycal(arrcal);
-            let arrcal2 = arrcal.map(row=>[...row]);
+            
             const result = Array(M);
-            Gaussjordan(arrcal2,result);
+            Gaussjordan(arrcal,result);
             setResultarrayx(result);
             const Xcal = parseFloat(xfind);
             let fxcal = 0;
@@ -158,30 +154,11 @@ function PolynomialRegression(){
                         {resultarrx.map((_,i) => i==0 ? `a${i}` : i==1 ? `+ a${i}x` :`+ a${i}x^${i}`)}
                     </div>
                 )}
-                {(arrayx!==null||arrcal!==null||resultarrx!==null||result!==null)&&(
-                    <div className="flex space-x-4 overflow-auto">
-                        {arrayx!==null &&(
-                            <div className="w-1/4 p-4 border-2 border-blue-300 rounded bg-blue-50 shadow">
-                                <h4 className="font-bold mb-2">Array Data</h4>
-                                {arrayx.map((item, index) => (
-                                    <p key={index}>
-                                        [{item[0]}, {item[1]}]
-                                    </p>
-                                ))}
-                            </div>
-                        )}
-                        {arrcal!==null &&(
-                            <div className="w-1/4 p-4 border-2 border-green-300 rounded bg-green-50 shadow">
-                                <h4 className="font-bold mb-2">Array of a</h4>
-                                {arrcal.map((item, index) => (
-                                    <p key={index}>
-                                        [{item[0]}, {item[1]},{item[2]}]
-                                    </p>
-                                ))}
-                            </div>
-                        )}
+                {(resultarrx!==null||result!==null)&&(
+                    <div className="flex space-x-4 overflow-auto justify-center">
+                        
                         {resultarrx!==null&&(
-                            <div className="w-1/4 p-4 border-2 border-yellow-300 rounded bg-yellow-50 shadow">
+                            <div className="p-4  rounded shadow-md">
                                 <h4 className="font-bold mb-2">Value of a</h4>
                                 {resultarrx.map((item,index)=>(
                                     <p key={index}>
@@ -191,7 +168,7 @@ function PolynomialRegression(){
                             </div>
                         )}
                         {result!==null&&(
-                            <div className="w-1/4 p-4 border-2 border-cyan-300 rounded bg-cyan-50 shadow">
+                            <div className="p-4 rounded shadow-md">
                                 <h4 className="font-bold mb-2">Result</h4>
                                 <p>f({xfind}) = {result.toFixed(6)}</p>
                             </div>

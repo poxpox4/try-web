@@ -2,13 +2,58 @@ import { useState } from "react";
 import {evaluate} from "mathjs";
 import Plot from 'react-plotly.js';
 import { MathJax,MathJaxContext } from "better-react-mathjax";
+import {useQuery,useMutation,useQueryClient} from "@tanstack/react-query";
+import axios from "axios";
 function Bisection(){
     const [fx,setFx] = useState("");
     const [xl,setXl] = useState("");
     const [xr,setXr] = useState("");
-    const [error,setError] = useState("");
+    const [error,setError] = useState(0.000001);
     const [result,setResult] = useState(null);
     const [iteration,setIteration] = useState([]);
+    //backend
+    const [selectId,setSelectId] = useState("");
+    const queryClient = useQueryClient();
+    //ดึงข้อมูลจากDB
+    const { data: equation = [], isLoading, error: fetchError } = useQuery({
+        queryKey: ["equation"],
+        queryFn: async () => {
+            const res = await axios.get("http://localhost:5000/root");
+            return res.data.results || [];
+        },
+    });
+    // เมื่อเลือกสมการ
+    const Select = (e) => {
+        const id = e.target.value;
+        setSelectId(id);
+        const found = equation.find((eq) => eq.ID === parseInt(id));
+        if(found) setFx(found.Equation);
+    }
+    // เพิ่มสมการใหม่
+    const addEquationMutation = useMutation({
+        mutationFn: async (newEquation) => {
+            const res = await axios.post("http://localhost:5000/root", { equation: newEquation });
+            return res.data;
+        },
+        onSuccess: (data) => {
+            if (data.success) {
+                alert("บันทึกสมการสำเร็จ");
+                queryClient.invalidateQueries({ queryKey: ["equation"] });
+            } else {
+                alert("บันทึกไม่สำเร็จ");
+            }
+        },
+    });
+    const AddEquation = () => {
+        const trimfx = fx.trim();
+        const isSameequation = equation.some(eq => eq.Equation.trim().toLowerCase() === trimfx.toLowerCase())
+        if(isSameequation){
+            alert("สมการนี้มีอยู่แล้ว");
+            return;
+        }
+        addEquationMutation.mutate(trimfx);
+    }
+    
     function Calculate(){
         try{
             if (!fx || !xl || !xr || !error) {
@@ -50,6 +95,9 @@ function Bisection(){
             alert("สมการผิด");
         }
     }
+    
+    if (isLoading) return <div>Loading...</div>;
+    if (fetchError) return <div>Error fetching equations</div>;
     return(
         <div className="flex flex-col items-center justify-center min-h-screen space-y-4 p-4">
             <h1 className="font-bold text-3xl">Bisection</h1>
@@ -61,6 +109,23 @@ function Bisection(){
                 </div>
             </MathJaxContext>
             <div className="w-full max-w-xl space-y-3 mt-1 px-10 py-10 bg-white-50 rounded-2xl shadow-md text-center">
+                <label >เลือกสมการ</label>
+                <select 
+                className="shadow-md rounded w-full px-4 py-3 text-center"
+                value={selectId}
+                onChange={Select}>
+                    <option value="">เลือกสมการ</option>
+                    {equation.map((eq) => (
+                        <option key={eq.ID} value={eq.ID}>{eq.Equation}</option>
+                    ))}
+                </select>
+                <div className="flex justify-center">
+                    <button 
+                    onClick={AddEquation}
+                    className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">
+                        +
+                    </button>
+                </div>
                 <div>
                     <label className="block mb-1">f(x)</label>
                     <input type="text" 
@@ -71,7 +136,7 @@ function Bisection(){
                 </div>
                 <div>
                     <label className="block mb-1">XL</label>
-                    <input type="text" 
+                    <input type="number" 
                     placeholder="1.5"
                     className="rounded shadow-md px-3 py-2 rounded w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 text-center"
                     value={xl}
@@ -79,7 +144,7 @@ function Bisection(){
                 </div>
                 <div>
                     <label className="block mb-1">XR</label>
-                    <input type="text" 
+                    <input type="number" 
                     placeholder="2"
                     className="rounded shadow-md px-3 py-2 rounded w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 text-center"
                     value={xr}
@@ -87,7 +152,7 @@ function Bisection(){
                 </div>
                 <div>
                     <label className="block mb-1">ERROR</label>
-                    <input type="text" 
+                    <input type="number" 
                     placeholder="0.000001"
                     className="rounded shadow-md px-3 py-2 rounded w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 text-center"
                     value={error}

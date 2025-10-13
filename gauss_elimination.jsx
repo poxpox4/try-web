@@ -25,6 +25,15 @@ function Gausseliminate(){
         const size = n;
         for(let i=0;i<size;i++){
             let forward = arr[i][i];
+            if(forward==0){
+                for(let k=i+1;k<size;k++){
+                    if(arr[k][i]!=0){
+                        [arr[i],arr[k]] = [arr[k],arr[i]];
+                        forward = arr[i][i];
+                        break;
+                    }
+                }
+            }
             for(let j=0;j<=size;j++){
                 arr[i][j] /= forward;
             }
@@ -129,6 +138,7 @@ function Gausseliminate(){
                     <p className="text-lg" key={i}>x{i+1} = {r.toFixed(6)}</p>
                 ))}
             </div>
+            
         </div>
     )
 }

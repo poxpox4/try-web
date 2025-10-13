@@ -40,8 +40,8 @@ function Linear(){
             }
             const N = x.length;
             if (x.length !== fx.length) {
-            alert("กรอกค่า X และ f(X) ให้จำนวนเท่ากัน");
-            return;
+                alert("กรอกค่า X และ f(X) ให้จำนวนเท่ากัน");
+                return;
             }
             const arrx = Array.from(Array(N),(_,i)=>[x[i],fx[i]]);
             setArrayx(arrx);
@@ -107,7 +107,7 @@ function Linear(){
             <h1 className="font-bold text-3xl">Linear Regression</h1>
             <div className="w-full max-w-xl space-y-3 mt-1 px-10 py-10 bg-white-50 rounded-2xl shadow-md text-center">
                 <div>
-                    <label className="bloc mb-1k">Value</label>
+                    <label className="block mb-1">Value</label>
                     <input type="text"
                     placeholder="Ex. 1,2,3"
                     className="rounded shadow-md px-3 py-2 rounded w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 text-center" 
@@ -124,7 +124,7 @@ function Linear(){
                 </div>
                 <div>
                     <label className="block mb-1">X value</label>
-                    <input type="text"
+                    <input type="number"
                     placeholder="ใส่ค่า X ที่ต้องการจะหา" 
                     className="rounded shadow-md px-3 py-2 rounded w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 text-center"
                     value={xfind}
@@ -133,41 +133,11 @@ function Linear(){
             </div>
                 
             <button onClick={Calculate} className="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded text-white">Calculate</button>
-            <MathJaxContext>
-                <div className="mt-6 bg-white-50 p-6 rounded-xl shadow-md text-center w-full max-w-2xl">
-                        <h2 className="font-bold text-xl mb-3">Solution</h2>
-                        {arrcal!==null && resultarrx!==null && result!==null &&(
-                            <MathJax>
-                                {`
-                                    $$f(x) = a_0 + a_1x$$ 
-                                    $$\\begin{bmatrix}
-                                    ${arrcal[0][0]} & ${arrcal[0][1]} \\\\
-                                    ${arrcal[1][0]} & ${arrcal[1][1]}
-                                    \\end{bmatrix}
-                                    \\begin{Bmatrix}
-                                    a_0 \\\\
-                                    a_1
-                                    \\end{Bmatrix}
-                                    =
-                                    \\begin{Bmatrix}
-                                    ${arrcal[0][2]} \\\\
-                                    ${arrcal[1][2]}
-                                    \\end{Bmatrix}$$
-                                    $$f(x) = ${resultarrx[0].toFixed(6)} + (${resultarrx[1].toFixed(6)})x$$
-                                    $$\\therefore f(${xfind}) = ${result.toFixed(6)}$$
-                                `}
-                            </MathJax>
-                        )}
-                </div>
-            </MathJaxContext>
-                
-        </div>
-    )
-}
-export default Linear;
-{/* <div>
+            
+            <div className="mt-1 px-4 py-10 bg-white-50 shadow-md rounded-2xl w-full max-w-4xl text-center">
+                <h2 className="font-bold text-xl">Solution</h2>
                 {resultarrx !== null && (
-                    <div className="font-bold">f(X) = a0 + a1X</div>
+                    <div className=" text-center mb-2">f(X) = a0 + a1X</div>
                 )}
                 {(arrayx!==null||arrcal!==null||resultarrx!==null||result!==null)&&(
                     <div className="flex space-x-4 overflow-auto">
@@ -209,4 +179,36 @@ export default Linear;
                         )}
                     </div>
                 )}
-            </div> */}
+            </div>
+                
+        </div>
+    )
+}
+export default Linear;
+{/* <MathJaxContext>
+                <div className="mt-6 bg-white-50 p-6 rounded-xl shadow-md text-center w-full max-w-2xl">
+                        <h2 className="font-bold text-xl mb-3">Solution</h2>
+                        {arrcal!==null && resultarrx!==null && result!==null &&(
+                            <MathJax>
+                                {`
+                                    $$f(x) = a_0 + a_1x$$ 
+                                    $$\\begin{bmatrix}
+                                    ${arrcal[0][0]} & ${arrcal[0][1]} \\\\
+                                    ${arrcal[1][0]} & ${arrcal[1][1]}
+                                    \\end{bmatrix}
+                                    \\begin{Bmatrix}
+                                    a_0 \\\\
+                                    a_1
+                                    \\end{Bmatrix}
+                                    =
+                                    \\begin{Bmatrix}
+                                    ${arrcal[0][2]} \\\\
+                                    ${arrcal[1][2]}
+                                    \\end{Bmatrix}$$
+                                    $$f(x) = ${resultarrx[0].toFixed(6)} + (${resultarrx[1].toFixed(6)})x$$
+                                    $$\\therefore f(${xfind}) = ${result.toFixed(6)}$$
+                                `}
+                            </MathJax>
+                        )}
+                </div>
+            </MathJaxContext> */}

@@ -2,13 +2,58 @@ import { useState } from "react";
 import { evaluate } from "mathjs";
 import { MathJax,MathJaxContext } from "better-react-mathjax";
 import Plot from "react-plotly.js";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 function Onepoint(){
     const [fx,setFx] = useState("");
-    const [x0,setX0] = useState("");
+    const [x0,setX0] = useState();
     //const [x1,setXl] = useState("");
-    const [error,setError] = useState("");
+    const [error,setError] = useState();
     const [result,setResult] = useState(null);
     const [iteration,setIteration] = useState([]);
+    //backend
+    const [selectId,setSelectId] = useState("");
+    const queryClient = useQueryClient();
+    //get DB
+    const {data: equation = [],isLoading,error:fetchError} = useQuery({
+        queryKey: ["equation"],
+        queryFn: async () => {
+            const res = await axios.get("http://localhost:5000/root");
+            return res.data.results || [];
+        }
+    })
+    //Select
+    const Select = (e) => {
+        const id = e.target.value;
+        setSelectId(id);
+        const found = equation.find((eq) => eq.ID === parseFloat(id));
+        if(found) setFx(found.Equation);
+    }
+    //Add
+    const addEquationMutation = useMutation({
+        mutationFn: async (newEquation) => {
+            const res = await axios.post("http://localhost:5000/root",{equation:newEquation});
+            return res.data;
+        },
+        onSuccess: (data) => {
+            if(data.success){
+                alert("เพิ่มสมการสำเร็จ");
+                queryClient.invalidateQueries({queryKey:["equation"]});
+            }
+            else{
+                alert("ไม่สามารถเพิ่มสมการได้");
+            }
+        }
+    })
+    const AddEquation = () => {
+        const trimfx = fx.trim();
+        const isSameequation = equation.some((eq) => eq.Equation.trim().toLowerCase() === trimfx.toLowerCase());
+        if(isSameequation){
+            alert("มีสมการนี้อยู่แล้ว");
+            return;
+        }
+        addEquationMutation.mutate(trimfx);
+    }
     function Calculate(){
         try{
             if(!fx||!x0||!error){
@@ -49,6 +94,8 @@ function Onepoint(){
             alert("สมการผิด");
         }
     }
+    if(isLoading) return <div>Loading...</div>
+    if(fetchError) return <div>Error fetch</div>
     return(
         <div className="flex flex-col items-center justify-center min-h-screen space-y-4 p-4">
             <h1 className="font-bold text-3xl">One-point iteration</h1>
@@ -60,6 +107,25 @@ function Onepoint(){
                 </div>
             </MathJaxContext>
             <div className="w-full max-w-xl space-y-3 mt-1 px-10 py-10 bg-white-50 rounded-2xl shadow-md text-center">
+                <label htmlFor="">เลือกสมการ</label>
+                <div className="flex justify-center">
+                    <select 
+                    className="shadow-md w-full rounded px-4 py-2 text-center"
+                    value={selectId}
+                    onChange={Select}>
+                        <option value="">เลือกสมการ</option>
+                        {equation.map((eq) => (
+                            <option key={eq.ID} value={eq.ID}>{eq.Equation}</option>
+                        ))}
+                    </select>
+                </div>
+                <div className="flex justify-center">
+                        <button className="bg-green-500 hover:bg-green-600 rounded px-4 py-2 text-white"
+                        onClick={AddEquation}>
+                            +
+                        </button>
+                </div>
+                
                 <div>
                     <label className="block mb-1">f(X)</label>
                     <input type="text" 
@@ -70,7 +136,7 @@ function Onepoint(){
                 </div>
                 <div>
                     <label className="block mb-1">X Start</label>
-                    <input type="text" 
+                    <input type="number" 
                     placeholder="1"
                     className="shadow-md px-3 py-2 rounded w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 text-center"
                     value={x0}
@@ -78,7 +144,7 @@ function Onepoint(){
                 </div>
                 <div>
                     <label className="block mb-1">ERROR</label>
-                    <input type="text" 
+                    <input type="number" 
                     placeholder="0.000001"
                     className="shadow-md px-3 py-2 rounded w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 text-center"
                     value={error}
